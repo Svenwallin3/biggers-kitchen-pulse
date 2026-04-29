@@ -7,6 +7,7 @@ import { DayBanner } from "../DayBanner";
 import { HourlyBarChart } from "../HourlyBarChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
+import { ProductionLogPanel } from "../ProductionLogPanel";
 
 export function DailyYesterday({ date }: { date: Date }) {
   const data = getDayData(date);
