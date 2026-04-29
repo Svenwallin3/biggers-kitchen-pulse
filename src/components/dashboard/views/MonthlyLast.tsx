@@ -73,6 +73,12 @@ export function MonthlyLast() {
         </div>
       </section>
 
+      <ProductionVsRetailPanel
+        items={production}
+        title="Production Output vs Retail Sell-Through · Monthly"
+        periodLabel="last month"
+      />
+
       <section className="space-y-3">
         <h3 className="section-header">Category Performance · Monthly</h3>
         <CategoryPanel categories={agg.categories} />
