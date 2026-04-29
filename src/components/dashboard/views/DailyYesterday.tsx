@@ -16,6 +16,15 @@ export function DailyYesterday({ date }: { date: Date }) {
   const isService = data.dayType === "Service";
   const { laborAlertThreshold } = useSettings();
 
+  // Dynamic label: "Yesterday" if date is exactly yesterday, otherwise the formatted date
+  const now = new Date();
+  const yest = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  const isYesterday =
+    date.getFullYear() === yest.getFullYear() &&
+    date.getMonth() === yest.getMonth() &&
+    date.getDate() === yest.getDate();
+  const dayLabel = isYesterday ? "Yesterday" : format(date, "EEE, MMM d");
+
   return (
     <div className="space-y-6">
       <DayBanner data={data} />
