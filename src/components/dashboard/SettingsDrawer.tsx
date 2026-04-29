@@ -5,7 +5,14 @@ import { Slider } from "@/components/ui/slider";
 import { useSettings } from "@/lib/settings";
 
 export function SettingsDrawer() {
-  const { laborAlertThreshold, revenueVarianceThreshold, setLaborAlertThreshold, setRevenueVarianceThreshold } = useSettings();
+  const {
+    laborAlertThreshold,
+    revenueVarianceThreshold,
+    unsoldThreshold,
+    setLaborAlertThreshold,
+    setRevenueVarianceThreshold,
+    setUnsoldThreshold,
+  } = useSettings();
   const [open, setOpen] = useState(false);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
