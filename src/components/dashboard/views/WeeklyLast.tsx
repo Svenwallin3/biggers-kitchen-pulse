@@ -111,6 +111,8 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
         </div>
       </section>
 
+      <ProductionVsRetailPanel items={production} periodLabel="last week" />
+
       <section className="space-y-3">
         <h3 className="section-header">Category Performance · Weekly</h3>
         <CategoryPanel categories={agg.categories} />
