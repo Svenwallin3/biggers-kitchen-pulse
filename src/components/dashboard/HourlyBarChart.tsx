@@ -23,11 +23,23 @@ export function HourlyBarChart({
     <div className="space-y-3">
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
+          <BarChart
+            data={data.map((d) => ({ ...d, hourStart: d.hour, hourCenter: d.hour + 0.5 }))}
+            margin={{ top: 10, right: 8, left: -10, bottom: 0 }}
+            barCategoryGap={0}
+            barGap={0}
+          >
             <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
             <XAxis
-              dataKey="hour"
+              dataKey="hourCenter"
+              type="number"
+              domain={[
+                Math.min(...data.map((d) => d.hour)),
+                Math.max(...data.map((d) => d.hour)) + 1,
+              ]}
+              ticks={data.map((d) => d.hour)}
               tickFormatter={(h) => `${h}:00`}
+              interval={0}
               stroke="hsl(var(--muted-foreground))"
               fontSize={11}
               tickLine={false}
