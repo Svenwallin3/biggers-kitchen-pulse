@@ -6,8 +6,8 @@ import { CategoryPanel } from "../CategoryPanel";
 import { ProductionVsRetailPanel } from "../ProductionVsRetailPanel";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function MonthlyLast() {
-  const monthAnchor = subMonths(new Date(), 1);
+export function MonthlyLast({ monthAnchor: anchorProp }: { monthAnchor?: Date } = {}) {
+  const monthAnchor = anchorProp ?? subMonths(new Date(), 1);
   const dates = getMonthDates(monthAnchor);
   const days = dates.map(getDayData);
   const pyDays = dates.map((d) => getDayData(priorYearEquivalent(d)));

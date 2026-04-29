@@ -45,8 +45,8 @@ export function ProductionVsRetailPanel({
         {/* Summary totals */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 bg-muted/40 border-b border-border">
           <Summary label="Sent (units / $)" primary={`${totals.units}`} secondary={fmtMoney(totals.sentVal)} hint="Transfer price" />
-          <Summary label="Location A sold" primary={`${totals.aUnits}`} secondary={fmtMoney(totals.aVal)} hint="Retail price" />
-          <Summary label="Location B sold" primary={`${totals.bUnits}`} secondary={fmtMoney(totals.bVal)} hint="Retail price" />
+          <Summary label="MKT ST sold" primary={`${totals.aUnits}`} secondary={fmtMoney(totals.aVal)} hint="Retail price" />
+          <Summary label="CB Rd. sold" primary={`${totals.bUnits}`} secondary={fmtMoney(totals.bVal)} hint="Retail price" />
           <Summary
             label="Total unsold"
             primary={`${totals.unsold}`}
@@ -68,10 +68,10 @@ export function ProductionVsRetailPanel({
                 <th className="py-2 px-3 font-medium">Item</th>
                 <th className="py-2 px-3 font-medium text-right">Sent qty</th>
                 <th className="py-2 px-3 font-medium text-right">Sent $ <span className="normal-case text-[10px] text-muted-foreground/80">(transfer)</span></th>
-                <th className="py-2 px-3 font-medium text-right">Loc A qty</th>
-                <th className="py-2 px-3 font-medium text-right">Loc A $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
-                <th className="py-2 px-3 font-medium text-right">Loc B qty</th>
-                <th className="py-2 px-3 font-medium text-right">Loc B $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                <th className="py-2 px-3 font-medium text-right">MKT ST qty</th>
+                <th className="py-2 px-3 font-medium text-right">MKT ST $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                <th className="py-2 px-3 font-medium text-right">CB Rd. qty</th>
+                <th className="py-2 px-3 font-medium text-right">CB Rd. $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
                 <th className="py-2 px-3 font-medium text-right">Unsold qty</th>
               </tr>
             </thead>
@@ -136,7 +136,7 @@ export function ProductionVsRetailPanel({
 
       <p className="text-xs text-muted-foreground">
         <strong>Sent $</strong> uses the internal kitchen transfer price.{" "}
-        <strong>Location A/B $</strong> uses retail price paid by the customer. Cells flagged amber when
+        <strong>Location MKT ST / CB Rd. $</strong> uses retail price paid by the customer. Cells flagged amber when
         unsold &gt; {unsoldThreshold}% of units sent.
       </p>
     </section>

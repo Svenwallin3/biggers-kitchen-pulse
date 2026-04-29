@@ -7,14 +7,14 @@ import { HourlyBarChart } from "../HourlyBarChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 
-export function DailyToday({ date }: { date: Date }) {
+export function DailyToday({ date, future = false }: { date: Date; future?: boolean }) {
   const today = getDayData(date);
   const py = getDayData(priorYearEquivalent(date));
   const isService = py.dayType === "Service";
 
   return (
     <div className="space-y-6">
-      <DayBanner data={today} label="Today" />
+      <DayBanner data={today} label={future ? `${format(date, "EEEE")} — Based on Last Year` : "Today"} />
 
       <section className="reference-surface rounded-xl border p-4">
         <div className="flex items-center justify-between mb-3">
