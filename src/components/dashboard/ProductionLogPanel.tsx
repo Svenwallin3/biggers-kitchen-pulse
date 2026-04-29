@@ -3,15 +3,16 @@ import { fmtMoney, fmtMoney2 } from "@/lib/format";
 
 interface Props {
   items: ProductionItem[];
+  label?: string;
 }
 
-export function ProductionLogPanel({ items }: Props) {
+export function ProductionLogPanel({ items, label = "Today" }: Props) {
   const totalUnits = items.reduce((s, i) => s + i.unitsSent, 0);
   const totalValue = items.reduce((s, i) => s + i.unitsSent * i.transferPrice, 0);
 
   return (
     <section className="space-y-3">
-      <h3 className="section-header">Production Output — Today</h3>
+      <h3 className="section-header">Production Output — {label}</h3>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="grid grid-cols-2 gap-4 p-4 bg-muted/40 border-b border-border">
           <div>
