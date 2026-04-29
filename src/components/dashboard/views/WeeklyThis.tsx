@@ -6,7 +6,7 @@ import { CategoryPanel } from "../CategoryPanel";
 import { WeatherStrip } from "../WeatherStrip";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function WeeklyThis({ weekAnchor }: { weekAnchor: Date }) {
+export function WeeklyThis({ weekAnchor, future = false }: { weekAnchor: Date; future?: boolean }) {
   const dates = getWeekDates(weekAnchor);
   const todayDays = dates.map(getDayData);
   const pyDates = dates.map(priorYearEquivalent);
