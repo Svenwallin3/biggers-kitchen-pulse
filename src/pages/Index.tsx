@@ -91,10 +91,31 @@ const Index = () => {
 
             <TabsContent value="daily" className="mt-4 space-y-4">
               <Tabs value={dailySub} onValueChange={setDailySub}>
-                <TabsList>
-                  <TabsTrigger value="yesterday">Yesterday</TabsTrigger>
-                  <TabsTrigger value="today">Today</TabsTrigger>
-                </TabsList>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <TabsList>
+                    <TabsTrigger value="yesterday">Yesterday</TabsTrigger>
+                    <TabsTrigger value="today">Today</TabsTrigger>
+                  </TabsList>
+                  {dailySub === "yesterday" && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <CalendarIcon className="w-4 h-4" />
+                          {format(drillDate || yesterday, "EEE, MMM d, yyyy")}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end" className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={drillDate || yesterday}
+                          onSelect={(d) => d && setDrillDate(d)}
+                          disabled={(d) => d > today}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                </div>
                 <TabsContent value="yesterday" className="mt-4">
                   <DailyYesterday date={drillDate || yesterday} key={refreshKey} />
                 </TabsContent>
