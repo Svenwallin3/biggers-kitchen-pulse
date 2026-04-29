@@ -7,6 +7,7 @@ import { DayBanner } from "../DayBanner";
 import { HourlyBarChart } from "../HourlyBarChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
+import { ProductionLogPanel } from "../ProductionLogPanel";
 
 export function DailyYesterday({ date }: { date: Date }) {
   const data = getDayData(date);
@@ -44,6 +45,8 @@ export function DailyYesterday({ date }: { date: Date }) {
           <p className="text-sm text-muted-foreground">Kitchen prep & wholesale. No walk-up service.</p>
         </div>
       )}
+
+      <ProductionLogPanel items={data.production} />
 
       <section className="space-y-3">
         <h3 className="section-header">Category Performance</h3>

@@ -1,5 +1,14 @@
 import { format } from "date-fns";
-import { aggregate, getDayData, getWeekDates, priorYearEquivalent } from "@/lib/mockData";
+import {
+  aggregate,
+  aggregateProduction,
+  getDayData,
+  getWeekDates,
+  getWeekToDateDates,
+  priorYearEquivalent,
+  todayDate,
+} from "@/lib/mockData";
+import { ProductionVsRetailPanel } from "../ProductionVsRetailPanel";
 import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
@@ -13,6 +22,12 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
   const pyDays = pyDates.map(getDayData);
   const agg = aggregate(days);
   const pyAgg = aggregate(pyDays);
+  const production = aggregateProduction(days);
+
+  // Week-to-date snapshot for the in-progress week (Monday → yesterday)
+  const wtdDates = getWeekToDateDates(todayDate());
+  const wtdDays = wtdDates.map(getDayData);
+  const wtdAgg = aggregate(wtdDays);
 
   const chartData = days.map((d) => ({
     day: format(d.date, "EEE"),
@@ -23,10 +38,33 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
 
   return (
     <div className="space-y-6">
+      {wtdDates.length > 0 && (
+        <section className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">Week to Date</span>
+              <div className="text-sm font-medium">
+                Mon {format(wtdDates[0], "MMM d")} – {format(wtdDates[wtdDates.length - 1], "EEE MMM d")} ({wtdDates.length} {wtdDates.length === 1 ? "day" : "days"} so far)
+              </div>
+            </div>
+            <div className="flex gap-6 text-sm">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">Revenue</div>
+                <div className="font-semibold tabular-nums">{fmtMoney(wtdAgg.revenue)}</div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">Labor %</div>
+                <div className="font-semibold tabular-nums">{fmtPct(wtdAgg.laborPct)}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="bg-card border border-border rounded-xl p-4 space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <span className="text-xs uppercase tracking-wide text-muted-foreground">Last Week</span>
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">Last Week (Mon–Sun)</span>
             <div className="text-lg font-semibold">
               {format(dates[0], "MMM d")} – {format(dates[6], "MMM d, yyyy")}
             </div>
@@ -72,6 +110,8 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
           </div>
         </div>
       </section>
+
+      <ProductionVsRetailPanel items={production} periodLabel="last week" />
 
       <section className="space-y-3">
         <h3 className="section-header">Category Performance · Weekly</h3>

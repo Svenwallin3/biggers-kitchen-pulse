@@ -1,8 +1,9 @@
 import { format, subMonths } from "date-fns";
-import { aggregate, getDayData, getMonthDates, priorYearEquivalent } from "@/lib/mockData";
+import { aggregate, aggregateProduction, getDayData, getMonthDates, priorYearEquivalent } from "@/lib/mockData";
 import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
+import { ProductionVsRetailPanel } from "../ProductionVsRetailPanel";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export function MonthlyLast() {
@@ -12,6 +13,7 @@ export function MonthlyLast() {
   const pyDays = dates.map((d) => getDayData(priorYearEquivalent(d)));
   const agg = aggregate(days);
   const pyAgg = aggregate(pyDays);
+  const production = aggregateProduction(days);
 
   const chartData = days.map((d, i) => ({
     day: d.date.getDate(),
@@ -70,6 +72,12 @@ export function MonthlyLast() {
           </div>
         </div>
       </section>
+
+      <ProductionVsRetailPanel
+        items={production}
+        title="Production Output vs Retail Sell-Through · Monthly"
+        periodLabel="last month"
+      />
 
       <section className="space-y-3">
         <h3 className="section-header">Category Performance · Monthly</h3>

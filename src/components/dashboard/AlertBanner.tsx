@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle, CloudRain, Info, X } from "lucide-react";
+import { subWeeks } from "date-fns";
+import { AlertTriangle, CloudRain, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/lib/settings";
-import { DayData } from "@/lib/mockData";
+import { DayData, aggregateProduction, getDayData, getWeekDates, todayDate } from "@/lib/mockData";
 
 interface AlertBannerProps {
   yesterday: DayData;
@@ -17,11 +18,29 @@ export function AlertBanner({
   todayWeather,
   tomorrowWeather,
 }: AlertBannerProps) {
-  const { laborAlertThreshold, revenueVarianceThreshold } = useSettings();
+  const { laborAlertThreshold, revenueVarianceThreshold, unsoldThreshold } = useSettings();
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
   const alerts = useMemo(() => {
     const out: { id: string; type: "danger" | "warning" | "info"; message: string }[] = [];
+
+    // Last week's production unsold rate
+    const lastWeekDates = getWeekDates(subWeeks(todayDate(), 1));
+    const lastWeekProd = aggregateProduction(lastWeekDates.map(getDayData));
+    const sentTotal = lastWeekProd.reduce((s, p) => s + p.unitsSent, 0);
+    const unsoldTotal = lastWeekProd.reduce(
+      (s, p) => s + Math.max(0, p.unitsSent - p.soldA - p.soldB),
+      0
+    );
+    const unsoldPct = sentTotal ? (unsoldTotal / sentTotal) * 100 : 0;
+    if (unsoldPct > unsoldThreshold) {
+      out.push({
+        id: "unsold",
+        type: "warning",
+        message: `Last week's unsold production at ${unsoldPct.toFixed(1)}% of units sent — above ${unsoldThreshold}% threshold.`,
+      });
+    }
+
     if (yesterday.laborPct > laborAlertThreshold) {
       out.push({
         id: "labor",
@@ -48,7 +67,7 @@ export function AlertBanner({
       });
     }
     return out.filter((a) => !dismissed.has(a.id));
-  }, [yesterday, yesterdayPriorYear, todayWeather, tomorrowWeather, laborAlertThreshold, revenueVarianceThreshold, dismissed]);
+  }, [yesterday, yesterdayPriorYear, todayWeather, tomorrowWeather, laborAlertThreshold, revenueVarianceThreshold, unsoldThreshold, dismissed]);
 
   if (alerts.length === 0) return null;
   return (
