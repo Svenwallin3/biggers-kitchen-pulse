@@ -41,7 +41,7 @@ export function DailyToday({ date, future = false }: { date: Date; future?: bool
         <p className="text-xs uppercase tracking-wide text-muted-foreground">
           Last Year's Same Day ({format(py.date, "EEE, MMM d, yyyy")})
         </p>
-        <div className={`grid gap-3 ${isService ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-6" : "grid-cols-2 md:grid-cols-4"}`}>
+        <div className={`grid gap-3 ${isService ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-7" : "grid-cols-2 md:grid-cols-4"}`}>
           <KpiCard label="Last Year Revenue" value={fmtMoney(py.revenue)} reference />
           <KpiCard label="Last Year Labor $" value={fmtMoney(py.laborCost)} reference />
           <KpiCard label="Last Year Labor %" value={fmtPct(py.laborPct)} reference />
