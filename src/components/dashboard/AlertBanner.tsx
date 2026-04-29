@@ -67,7 +67,7 @@ export function AlertBanner({
       });
     }
     return out.filter((a) => !dismissed.has(a.id));
-  }, [yesterday, yesterdayPriorYear, todayWeather, tomorrowWeather, laborAlertThreshold, revenueVarianceThreshold, dismissed]);
+  }, [yesterday, yesterdayPriorYear, todayWeather, tomorrowWeather, laborAlertThreshold, revenueVarianceThreshold, unsoldThreshold, dismissed]);
 
   if (alerts.length === 0) return null;
   return (
