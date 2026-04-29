@@ -24,14 +24,9 @@ const Index = () => {
   const [monthlySub, setMonthlySub] = useState("last");
   const today = todayDate();
   const yesterday = yesterdayDate();
-  // Default the "Yesterday" view to the most recent Saturday so the
-  // Service-day hourly chart is visible by default in the demo.
-  const defaultDrill = useMemo(() => {
-    const d = new Date(today);
-    const dow = d.getDay(); // 0 Sun..6 Sat
-    const back = (dow - 6 + 7) % 7 || 7; // most recent past Saturday
-    return subDays(d, back);
-  }, [today]);
+  // Default the "Yesterday" view to actual yesterday (Wednesday in the
+  // pinned demo) so the weekday Production-day layout is visible by default.
+  const defaultDrill = useMemo(() => yesterday, [yesterday]);
   const [drillDate, setDrillDate] = useState<Date | null>(defaultDrill);
   const lastWeekAnchor = useMemo(() => subWeeks(today, 1), [today]);
   const lastRefresh = useMemo(() => new Date(), [refreshKey]);
