@@ -8,6 +8,7 @@ import { HourlyBarChart } from "../HourlyBarChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 import { ProductionLogPanel } from "../ProductionLogPanel";
+import { ProductionVsRetailPanel } from "../ProductionVsRetailPanel";
 
 export function DailyYesterday({ date }: { date: Date }) {
   const data = getDayData(date);
@@ -47,6 +48,12 @@ export function DailyYesterday({ date }: { date: Date }) {
       )}
 
       <ProductionLogPanel items={data.production} />
+
+      <ProductionVsRetailPanel
+        items={data.production}
+        title="Production Sent vs Market Retail Sales · Today"
+        periodLabel="today"
+      />
 
       <section className="space-y-3">
         <h3 className="section-header">Category Performance</h3>
