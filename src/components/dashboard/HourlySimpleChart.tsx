@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CATEGORY_PALETTE, HourBar } from "@/lib/mockData";
+import { HourBar } from "@/lib/mockData";
 import { fmtMoney } from "@/lib/format";
 
 export function HourlySimpleChart({
@@ -18,7 +18,6 @@ export function HourlySimpleChart({
   data: HourBar[];
   reference?: boolean;
 }) {
-  const cats = Array.from(new Set(data.map((d) => d.topCategory)));
   return (
     <div className="space-y-3">
       <div className="h-64 w-full">
@@ -83,31 +82,21 @@ export function HourlySimpleChart({
             <Bar
               dataKey="revenue"
               radius={[4, 4, 0, 0]}
-              fillOpacity={reference ? 0.5 : 1}
+              fillOpacity={reference ? 0.7 : 1}
             >
-              {data.map((d, i) => (
+              {data.map((_, i) => (
                 <Cell
                   key={i}
-                  fill={CATEGORY_PALETTE[d.topCategory] || "hsl(var(--primary))"}
-                  stroke={reference ? CATEGORY_PALETTE[d.topCategory] : undefined}
-                  strokeDasharray={reference ? "3 3" : undefined}
+                  fill={
+                    i % 2 === 0
+                      ? "hsl(var(--muted-foreground) / 0.85)"
+                      : "hsl(var(--muted-foreground) / 0.45)"
+                  }
                 />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span className="uppercase tracking-wide mr-2">Top category by hour:</span>
-        {cats.map((c) => (
-          <span key={c} className="inline-flex items-center gap-1.5">
-            <span
-              className="w-2.5 h-2.5 rounded-sm"
-              style={{ background: CATEGORY_PALETTE[c] }}
-            />
-            {c}
-          </span>
-        ))}
       </div>
     </div>
   );
