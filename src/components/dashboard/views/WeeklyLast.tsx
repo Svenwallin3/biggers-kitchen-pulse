@@ -1,5 +1,14 @@
 import { format } from "date-fns";
-import { aggregate, getDayData, getWeekDates, priorYearEquivalent } from "@/lib/mockData";
+import {
+  aggregate,
+  aggregateProduction,
+  getDayData,
+  getWeekDates,
+  getWeekToDateDates,
+  priorYearEquivalent,
+  todayDate,
+} from "@/lib/mockData";
+import { ProductionVsRetailPanel } from "../ProductionVsRetailPanel";
 import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
