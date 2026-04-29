@@ -23,13 +23,36 @@ export function HourlySimpleChart({
     <div className="space-y-3">
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
+          <BarChart
+            data={data}
+            margin={{ top: 10, right: 8, left: -10, bottom: 0 }}
+            barCategoryGap={0}
+            barGap={0}
+          >
             <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
             <XAxis
               dataKey="hour"
-              tickFormatter={(h) => `${h}:00`}
+              interval={0}
+              tick={(props: any) => {
+                const { x, y, payload } = props;
+                const scale = props.scale;
+                let offset = 0;
+                if (scale && scale.bandwidth) {
+                  offset = -scale.bandwidth() / 2;
+                }
+                return (
+                  <text
+                    x={x + offset}
+                    y={y + 12}
+                    textAnchor="start"
+                    fill="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                  >
+                    {payload.value}:00
+                  </text>
+                );
+              }}
               stroke="hsl(var(--muted-foreground))"
-              fontSize={11}
               tickLine={false}
               axisLine={false}
             />
