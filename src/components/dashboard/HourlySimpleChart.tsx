@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CATEGORY_PALETTE, HourBar } from "@/lib/mockData";
+import { HourBar } from "@/lib/mockData";
 import { fmtMoney } from "@/lib/format";
 
 export function HourlySimpleChart({
@@ -18,7 +18,6 @@ export function HourlySimpleChart({
   data: HourBar[];
   reference?: boolean;
 }) {
-  const cats = Array.from(new Set(data.map((d) => d.topCategory)));
   return (
     <div className="space-y-3">
       <div className="h-64 w-full">
