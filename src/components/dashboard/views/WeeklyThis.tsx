@@ -22,9 +22,9 @@ export function WeeklyThis({ weekAnchor, future = false }: { weekAnchor: Date; f
   return (
     <div className="space-y-6">
       <section className="bg-card border border-border rounded-xl p-4">
-        <span className="text-xs uppercase tracking-wide text-muted-foreground">This Week</span>
+        <span className="text-xs uppercase tracking-wide text-muted-foreground">{future ? "Upcoming Week" : "This Week"}</span>
         <div className="text-lg font-semibold">
-          {format(dates[0], "MMM d")} – {format(dates[6], "MMM d, yyyy")}
+          Week of {format(dates[0], "MMM d")} – {format(dates[6], "MMM d, yyyy")}{future && " — Based on Last Year"}
         </div>
       </section>
 
