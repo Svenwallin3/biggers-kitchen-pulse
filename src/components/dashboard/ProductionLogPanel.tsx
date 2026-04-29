@@ -12,7 +12,7 @@ export function ProductionLogPanel({ items, label = "Today" }: Props) {
 
   return (
     <section className="space-y-3">
-      <h3 className="section-header">Production Output — Today</h3>
+      <h3 className="section-header">Production Output — {label}</h3>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="grid grid-cols-2 gap-4 p-4 bg-muted/40 border-b border-border">
           <div>
