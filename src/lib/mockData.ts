@@ -256,6 +256,8 @@ export function getWeekToDateDates(today: Date): Date[] {
   }
   return out;
 }
+
+export function getMonthDates(anchor: Date): Date[] {
   const y = anchor.getFullYear();
   const m = anchor.getMonth();
   const days = new Date(y, m + 1, 0).getDate();
