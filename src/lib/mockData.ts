@@ -33,6 +33,15 @@ export interface HourBar {
   topThree: { name: string; revenue: number }[];
 }
 
+export interface ProductionItem {
+  name: string;
+  unitsSent: number;
+  transferPrice: number; // per unit
+  retailPrice: number; // per unit
+  soldA: number;
+  soldB: number;
+}
+
 export interface DayData {
   date: Date;
   dayType: DayType;
@@ -45,6 +54,7 @@ export interface DayData {
   salesPerHour: number;
   hourly: HourBar[];
   categories: CategoryRow[];
+  production: ProductionItem[];
 }
 
 export const CATEGORY_PALETTE: Record<string, string> = {
