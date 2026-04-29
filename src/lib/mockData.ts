@@ -243,7 +243,19 @@ export function getWeekDates(anchor: Date): Date[] {
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
 
-export function getMonthDates(anchor: Date): Date[] {
+// Returns Monday..yesterday for the in-progress week containing `today`.
+// If today is Monday, returns just [Monday] (so far). Empty if no full day yet.
+export function getWeekToDateDates(today: Date): Date[] {
+  const start = startOfWeek(today, { weekStartsOn: 1 });
+  const out: Date[] = [];
+  let cur = start;
+  while (cur < today) {
+    // strip time when comparing — include all completed days before today
+    out.push(new Date(cur));
+    cur = addDays(cur, 1);
+  }
+  return out;
+}
   const y = anchor.getFullYear();
   const m = anchor.getMonth();
   const days = new Date(y, m + 1, 0).getDate();
