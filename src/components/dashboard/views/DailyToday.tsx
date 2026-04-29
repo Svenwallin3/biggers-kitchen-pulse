@@ -3,7 +3,7 @@ import { getDayData, priorYearEquivalent } from "@/lib/mockData";
 import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { DayBanner } from "../DayBanner";
-import { HourlyBarChart } from "../HourlyBarChart";
+import { HourlySimpleChart } from "../HourlySimpleChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 
@@ -52,9 +52,9 @@ export function DailyToday({ date, future = false }: { date: Date; future?: bool
 
       {isService && (
         <section className="space-y-3">
-          <h3 className="section-header">Last Year — Hourly Trend</h3>
+          <h3 className="section-header">Last Year — Hourly Sales</h3>
           <div className="reference-surface rounded-xl border p-4">
-            <HourlyBarChart data={py.hourly} reference />
+            <HourlySimpleChart data={py.hourly} reference />
           </div>
         </section>
       )}
