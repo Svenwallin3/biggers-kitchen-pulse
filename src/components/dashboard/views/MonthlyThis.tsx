@@ -19,8 +19,10 @@ export function MonthlyThis({ monthAnchor: anchorProp, future = false }: { month
   return (
     <div className="space-y-6">
       <section className="bg-card border border-border rounded-xl p-4">
-        <span className="text-xs uppercase tracking-wide text-muted-foreground">This Month</span>
-        <div className="text-lg font-semibold">{format(monthAnchor, "MMMM yyyy")}</div>
+        <span className="text-xs uppercase tracking-wide text-muted-foreground">{future ? "Upcoming Month" : "This Month"}</span>
+        <div className="text-lg font-semibold">
+          {format(monthAnchor, "MMMM yyyy")}{future && " — Based on Last Year"}
+        </div>
       </section>
 
       <div className="space-y-2">
