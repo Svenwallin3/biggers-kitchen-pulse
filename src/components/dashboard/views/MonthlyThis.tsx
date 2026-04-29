@@ -5,8 +5,8 @@ import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function MonthlyThis() {
-  const monthAnchor = new Date();
+export function MonthlyThis({ monthAnchor: anchorProp, future = false }: { monthAnchor?: Date; future?: boolean } = {}) {
+  const monthAnchor = anchorProp ?? new Date();
   const dates = getMonthDates(monthAnchor);
   const pyDays = dates.map((d) => getDayData(priorYearEquivalent(d)));
   const pyAgg = aggregate(pyDays);
