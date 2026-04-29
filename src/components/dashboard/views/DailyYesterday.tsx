@@ -56,9 +56,9 @@ export function DailyYesterday({ date }: { date: Date }) {
         </div>
       )}
 
-      <ProductionLogPanel items={data.production} />
+      <ProductionLogPanel items={data.production} label={dayLabel} />
 
-      <MarketRetailDaily items={data.production} title="Market Retail Sales · Yesterday" />
+      <MarketRetailDaily items={data.production} title={`Market Retail Sales · ${dayLabel}`} />
 
       <section className="space-y-3">
         <h3 className="section-header">Category Performance</h3>
