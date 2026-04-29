@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { aggregate, getDayData, getWeekDates, priorYearEquivalent } from "@/lib/mockData";
-import { fmtMoney, fmtPct } from "@/lib/format";
+import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherStrip } from "../WeatherStrip";
@@ -35,12 +35,14 @@ export function WeeklyThis({ weekAnchor }: { weekAnchor: Date }) {
 
       <div className="space-y-2">
         <p className="text-xs uppercase tracking-wide text-muted-foreground">
-          Outlook · Based on last year ({format(pyDates[0], "MMM d")} – {format(pyDates[6], "MMM d, yyyy")})
+          Last Year's Same Week ({format(pyDates[0], "MMM d")} – {format(pyDates[6], "MMM d, yyyy")})
         </p>
-        <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
-          <KpiCard label="Expected Revenue" value={fmtMoney(pyAgg.revenue)} reference />
-          <KpiCard label="Expected Labor %" value={fmtPct(pyAgg.laborPct)} reference />
-          <KpiCard label="Expected Top Category" value={pyAgg.categories[0]?.name || "—"} reference />
+        <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          <KpiCard label="Last Year Revenue" value={fmtMoney(pyAgg.revenue)} reference />
+          <KpiCard label="Last Year Labor $" value={fmtMoney(pyAgg.laborCost)} reference />
+          <KpiCard label="Last Year Labor %" value={fmtPct(pyAgg.laborPct)} reference />
+          <KpiCard label="Last Year Avg Ticket" value={fmtMoney2(pyAgg.avgTicket)} reference />
+          <KpiCard label="Last Year Top Category" value={pyAgg.categories[0]?.name || "—"} reference />
         </div>
       </div>
 
