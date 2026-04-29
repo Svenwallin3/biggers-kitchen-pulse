@@ -3,9 +3,10 @@ import { fmtMoney, fmtMoney2 } from "@/lib/format";
 
 interface Props {
   items: ProductionItem[];
+  label?: string;
 }
 
-export function ProductionLogPanel({ items }: Props) {
+export function ProductionLogPanel({ items, label = "Today" }: Props) {
   const totalUnits = items.reduce((s, i) => s + i.unitsSent, 0);
   const totalValue = items.reduce((s, i) => s + i.unitsSent * i.transferPrice, 0);
 
