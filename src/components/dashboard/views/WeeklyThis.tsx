@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { aggregate, getDayData, getWeekDates, priorYearEquivalent } from "@/lib/mockData";
-import { fmtMoney, fmtPct } from "@/lib/format";
+import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherStrip } from "../WeatherStrip";
