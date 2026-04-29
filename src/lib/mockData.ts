@@ -314,9 +314,14 @@ export function aggregate(days: DayData[]) {
 }
 
 export function todayDate(): Date {
-  // Use a deterministic "today" so the demo data stays interesting.
-  // Replace with `new Date()` once wired to live data.
-  return new Date();
+  // Demo: pin "today" to the nearest upcoming Thursday so the Daily tabs
+  // showcase Wednesday (yesterday) and Thursday (today) — both weekday
+  // Production days. Replace with `new Date()` once wired to live data.
+  const d = new Date();
+  const dow = d.getDay(); // 0 Sun..6 Sat, Thu = 4
+  const forward = (4 - dow + 7) % 7;
+  d.setDate(d.getDate() + forward);
+  return d;
 }
 
 export function yesterdayDate(): Date {
