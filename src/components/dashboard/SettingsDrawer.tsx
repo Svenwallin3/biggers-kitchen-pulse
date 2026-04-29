@@ -62,6 +62,22 @@ export function SettingsDrawer() {
               Trigger an amber banner when revenue is this % below prior year.
             </p>
           </div>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">Unsold production alert</label>
+              <span className="text-sm tabular-nums font-semibold">{unsoldThreshold}%</span>
+            </div>
+            <Slider
+              value={[unsoldThreshold]}
+              min={10}
+              max={60}
+              step={1}
+              onValueChange={(v) => setUnsoldThreshold(v[0])}
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              Flag items and trigger an amber banner when weekly unsold units exceed this % of units sent.
+            </p>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
