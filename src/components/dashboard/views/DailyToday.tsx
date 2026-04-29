@@ -3,7 +3,7 @@ import { getDayData, priorYearEquivalent } from "@/lib/mockData";
 import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { KpiCard } from "../KpiCard";
 import { DayBanner } from "../DayBanner";
-import { HourlyBarChart } from "../HourlyBarChart";
+import { HourlySimpleChart } from "../HourlySimpleChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 
