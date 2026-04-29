@@ -172,6 +172,31 @@ export function getDayData(date: Date): DayData {
     };
   }).sort((a, b) => b.revenue - a.revenue);
 
+  // Production output — kitchen items transferred to market locations.
+  // Generated for every day of the week (bakers prep daily, including Fri-Sun).
+  const PRODUCTION_ITEMS = [
+    { name: "Sourdough Loaf", transferPrice: 4.5, retailPrice: 9.0 },
+    { name: "Country Boule", transferPrice: 4.2, retailPrice: 8.5 },
+    { name: "Baguette", transferPrice: 2.8, retailPrice: 5.5 },
+    { name: "Croissant", transferPrice: 1.6, retailPrice: 3.75 },
+    { name: "Pain au Chocolat", transferPrice: 1.9, retailPrice: 4.25 },
+    { name: "Cinnamon Roll", transferPrice: 2.4, retailPrice: 5.5 },
+    { name: "Focaccia Tray", transferPrice: 6.5, retailPrice: 14.0 },
+    { name: "Quiche (whole)", transferPrice: 9.0, retailPrice: 22.0 },
+    { name: "Granola 12oz", transferPrice: 5.0, retailPrice: 11.0 },
+    { name: "Cookie 4-pack", transferPrice: 3.5, retailPrice: 8.0 },
+  ];
+  const production: ProductionItem[] = PRODUCTION_ITEMS.map((p) => {
+    const baseUnits = 30 + rand() * 90;
+    const unitsSent = Math.round(baseUnits);
+    // Sell-through rate per location ~ 30-55%, sometimes weak
+    const stA = 0.25 + rand() * 0.35;
+    const stB = 0.25 + rand() * 0.35;
+    const soldA = Math.min(unitsSent, Math.round(unitsSent * stA));
+    const soldB = Math.min(unitsSent - soldA, Math.round(unitsSent * stB));
+    return { ...p, unitsSent, soldA, soldB };
+  });
+
   return {
     date,
     dayType,
@@ -184,7 +209,25 @@ export function getDayData(date: Date): DayData {
     salesPerHour,
     hourly,
     categories,
+    production,
   };
+}
+
+export function aggregateProduction(days: DayData[]): ProductionItem[] {
+  const map = new Map<string, ProductionItem>();
+  days.forEach((d) =>
+    d.production.forEach((p) => {
+      const cur = map.get(p.name);
+      if (!cur) {
+        map.set(p.name, { ...p });
+      } else {
+        cur.unitsSent += p.unitsSent;
+        cur.soldA += p.soldA;
+        cur.soldB += p.soldB;
+      }
+    })
+  );
+  return Array.from(map.values()).sort((a, b) => b.unitsSent - a.unitsSent);
 }
 
 // "Same day last year" using same day-of-week, same relative week
