@@ -46,6 +46,8 @@ export function DailyYesterday({ date }: { date: Date }) {
         </div>
       )}
 
+      <ProductionLogPanel items={data.production} />
+
       <section className="space-y-3">
         <h3 className="section-header">Category Performance</h3>
         <CategoryPanel categories={data.categories} />
