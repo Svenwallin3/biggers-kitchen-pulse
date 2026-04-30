@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { ProductionItem } from "@/lib/mockData";
 import { useSettings } from "@/lib/settings";
 import { fmtMoney, fmtMoney2 } from "@/lib/format";
@@ -60,75 +62,20 @@ export function ProductionVsRetailPanel({
           />
         </div>
 
-        {/* Desktop table */}
-        <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
-                <th className="py-2 px-3 font-medium">Item</th>
-                <th className="py-2 px-3 font-medium text-right">Sent qty</th>
-                <th className="py-2 px-3 font-medium text-right">Sent $ <span className="normal-case text-[10px] text-muted-foreground/80">(transfer)</span></th>
-                <th className="py-2 px-3 font-medium text-right">MKT ST qty</th>
-                <th className="py-2 px-3 font-medium text-right">MKT ST $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
-                <th className="py-2 px-3 font-medium text-right">CB Rd. qty</th>
-                <th className="py-2 px-3 font-medium text-right">CB Rd. $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
-                <th className="py-2 px-3 font-medium text-right">Unsold qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((it) => {
-                const unsold = Math.max(0, it.unitsSent - it.soldA - it.soldB);
-                const pct = it.unitsSent ? (unsold / it.unitsSent) * 100 : 0;
-                const flag = pct > unsoldThreshold;
-                return (
-                  <tr key={it.name} className="border-b border-border/60 last:border-0">
-                    <td className="py-2 px-3 font-medium">{it.name}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{it.unitsSent}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(it.unitsSent * it.transferPrice)}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{it.soldA}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(it.soldA * it.retailPrice)}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{it.soldB}</td>
-                    <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(it.soldB * it.retailPrice)}</td>
-                    <td
-                      className={cn(
-                        "py-2 px-3 text-right tabular-nums font-semibold",
-                        flag && "bg-warning/15 text-warning"
-                      )}
-                    >
-                      {unsold} {flag && <span className="text-[10px] font-normal">({pct.toFixed(0)}%)</span>}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile / tablet stacked cards */}
-        <div className="lg:hidden divide-y divide-border">
+        {/* Per-item collapsibles */}
+        <div className="divide-y divide-border">
           {items.map((it) => {
             const unsold = Math.max(0, it.unitsSent - it.soldA - it.soldB);
             const pct = it.unitsSent ? (unsold / it.unitsSent) * 100 : 0;
             const flag = pct > unsoldThreshold;
             return (
-              <div key={it.name} className="p-3 space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="font-medium text-sm">{it.name}</div>
-                  <div
-                    className={cn(
-                      "text-xs px-2 py-0.5 rounded-md tabular-nums",
-                      flag ? "bg-warning/15 text-warning font-semibold" : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {unsold} unsold ({pct.toFixed(0)}%)
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <Cell label="Sent" qty={it.unitsSent} dollars={fmtMoney2(it.unitsSent * it.transferPrice)} dollarHint="transfer" />
-                  <Cell label="Loc A" qty={it.soldA} dollars={fmtMoney2(it.soldA * it.retailPrice)} dollarHint="retail" />
-                  <Cell label="Loc B" qty={it.soldB} dollars={fmtMoney2(it.soldB * it.retailPrice)} dollarHint="retail" />
-                </div>
-              </div>
+              <ItemRow
+                key={it.name}
+                item={it}
+                unsold={unsold}
+                pct={pct}
+                flag={flag}
+              />
             );
           })}
         </div>
@@ -178,6 +125,92 @@ function Cell({ label, qty, dollars, dollarHint }: { label: string; qty: number;
       <div className="text-[10px] text-muted-foreground tabular-nums">
         {dollars} <span className="opacity-70">{dollarHint}</span>
       </div>
+    </div>
+  );
+}
+
+function ItemRow({
+  item,
+  unsold,
+  pct,
+  flag,
+}: {
+  item: ProductionItem;
+  unsold: number;
+  pct: number;
+  flag: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const totalRetail = item.soldA * item.retailPrice + item.soldB * item.retailPrice;
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-[hsl(150_55%_22%)] text-white hover:bg-[hsl(150_55%_18%)] transition-colors"
+      >
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <ChevronDown className={cn("w-4 h-4 transition-transform", open && "rotate-180")} />
+          {item.name}
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              "text-xs px-2 py-0.5 rounded-md tabular-nums",
+              flag ? "bg-warning/20 text-warning font-semibold" : "bg-white/15 text-white/90"
+            )}
+          >
+            {unsold} unsold ({pct.toFixed(0)}%)
+          </span>
+          <span className="text-sm font-semibold tabular-nums">{fmtMoney2(totalRetail)}</span>
+        </div>
+      </button>
+
+      {open && (
+        <div className="border-t border-border bg-card">
+          {/* Desktop detail row */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
+                  <th className="py-2 px-3 font-medium text-right">Sent qty</th>
+                  <th className="py-2 px-3 font-medium text-right">Sent $ <span className="normal-case text-[10px] text-muted-foreground/80">(transfer)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">MKT ST qty</th>
+                  <th className="py-2 px-3 font-medium text-right">MKT ST $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">CB Rd. qty</th>
+                  <th className="py-2 px-3 font-medium text-right">CB Rd. $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">Unsold qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.unitsSent}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.unitsSent * item.transferPrice)}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.soldA}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.soldA * item.retailPrice)}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.soldB}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.soldB * item.retailPrice)}</td>
+                  <td
+                    className={cn(
+                      "py-2 px-3 text-right tabular-nums font-semibold",
+                      flag && "bg-warning/15 text-warning"
+                    )}
+                  >
+                    {unsold}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile detail */}
+          <div className="lg:hidden p-3 grid grid-cols-3 gap-2 text-xs">
+            <Cell label="Sent" qty={item.unitsSent} dollars={fmtMoney2(item.unitsSent * item.transferPrice)} dollarHint="transfer" />
+            <Cell label="MKT ST" qty={item.soldA} dollars={fmtMoney2(item.soldA * item.retailPrice)} dollarHint="retail" />
+            <Cell label="CB Rd." qty={item.soldB} dollars={fmtMoney2(item.soldB * item.retailPrice)} dollarHint="retail" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

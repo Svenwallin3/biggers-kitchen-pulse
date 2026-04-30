@@ -39,7 +39,7 @@ export function MarketRetailDaily({ items, title = "Market Retail Sales · Yeste
 
         <button
           onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-muted/40 transition-colors"
+          className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-[hsl(150_55%_22%)] text-white hover:bg-[hsl(150_55%_18%)] transition-colors"
         >
           <div className="flex items-center gap-2 text-sm font-medium">
             <ChevronDown className={cn("w-4 h-4 transition-transform", open && "rotate-180")} />
