@@ -34,6 +34,7 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
     date: d.date,
     revenue: d.revenue,
     type: d.dayType,
+    topCategory: [...d.categories].sort((a, b) => b.revenue - a.revenue)[0]?.name || "—",
   }));
 
   return (
@@ -92,8 +93,18 @@ export function WeeklyLast({ weekAnchor, onDayClick }: { weekAnchor: Date; onDay
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
                   cursor={{ fill: "hsl(var(--muted))" }}
-                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                  formatter={(v: number) => fmtMoney(v)}
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0].payload as any;
+                    return (
+                      <div className="bg-card border border-border rounded-lg p-3 text-xs shadow-sm">
+                        <div className="font-semibold mb-1">{d.day} — {fmtMoney(d.revenue)}</div>
+                        <div className="text-muted-foreground">
+                          Top category: <span className="text-foreground font-medium">{d.topCategory}</span>
+                        </div>
+                      </div>
+                    );
+                  }}
                 />
                 <Bar dataKey="revenue" radius={[4, 4, 0, 0]} onClick={(d: any) => onDayClick?.(d.date)} cursor="pointer" label={{ position: "top", fontSize: 10, fill: "hsl(var(--muted-foreground))", formatter: (v: number) => `$${(v / 1000).toFixed(1)}k` }}>
                   {chartData.map((d, i) => (
