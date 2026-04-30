@@ -128,3 +128,89 @@ function Cell({ label, qty, dollars, dollarHint }: { label: string; qty: number;
     </div>
   );
 }
+
+function ItemRow({
+  item,
+  unsold,
+  pct,
+  flag,
+}: {
+  item: ProductionItem;
+  unsold: number;
+  pct: number;
+  flag: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const totalRetail = item.soldA * item.retailPrice + item.soldB * item.retailPrice;
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-[hsl(150_55%_22%)] text-white hover:bg-[hsl(150_55%_18%)] transition-colors"
+      >
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <ChevronDown className={cn("w-4 h-4 transition-transform", open && "rotate-180")} />
+          {item.name}
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              "text-xs px-2 py-0.5 rounded-md tabular-nums",
+              flag ? "bg-warning/20 text-warning font-semibold" : "bg-white/15 text-white/90"
+            )}
+          >
+            {unsold} unsold ({pct.toFixed(0)}%)
+          </span>
+          <span className="text-sm font-semibold tabular-nums">{fmtMoney2(totalRetail)}</span>
+        </div>
+      </button>
+
+      {open && (
+        <div className="border-t border-border bg-card">
+          {/* Desktop detail row */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
+                  <th className="py-2 px-3 font-medium text-right">Sent qty</th>
+                  <th className="py-2 px-3 font-medium text-right">Sent $ <span className="normal-case text-[10px] text-muted-foreground/80">(transfer)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">MKT ST qty</th>
+                  <th className="py-2 px-3 font-medium text-right">MKT ST $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">CB Rd. qty</th>
+                  <th className="py-2 px-3 font-medium text-right">CB Rd. $ <span className="normal-case text-[10px] text-muted-foreground/80">(retail)</span></th>
+                  <th className="py-2 px-3 font-medium text-right">Unsold qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.unitsSent}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.unitsSent * item.transferPrice)}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.soldA}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.soldA * item.retailPrice)}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{item.soldB}</td>
+                  <td className="py-2 px-3 text-right tabular-nums">{fmtMoney2(item.soldB * item.retailPrice)}</td>
+                  <td
+                    className={cn(
+                      "py-2 px-3 text-right tabular-nums font-semibold",
+                      flag && "bg-warning/15 text-warning"
+                    )}
+                  >
+                    {unsold}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile detail */}
+          <div className="lg:hidden p-3 grid grid-cols-3 gap-2 text-xs">
+            <Cell label="Sent" qty={item.unitsSent} dollars={fmtMoney2(item.unitsSent * item.transferPrice)} dollarHint="transfer" />
+            <Cell label="MKT ST" qty={item.soldA} dollars={fmtMoney2(item.soldA * item.retailPrice)} dollarHint="retail" />
+            <Cell label="CB Rd." qty={item.soldB} dollars={fmtMoney2(item.soldB * item.retailPrice)} dollarHint="retail" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
