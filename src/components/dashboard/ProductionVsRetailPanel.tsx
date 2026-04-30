@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { ProductionItem } from "@/lib/mockData";
 import { useSettings } from "@/lib/settings";
 import { fmtMoney, fmtMoney2 } from "@/lib/format";
