@@ -17,6 +17,7 @@ export function WeeklyThis({ weekAnchor, future = false }: { weekAnchor: Date; f
     day: format(d.date, "EEE"),
     revenue: d.revenue,
     type: d.dayType,
+    topCategory: [...d.categories].sort((a, b) => b.revenue - a.revenue)[0]?.name || "—",
   }));
 
   return (
@@ -55,7 +56,20 @@ export function WeeklyThis({ weekAnchor, future = false }: { weekAnchor: Date; f
                 <CartesianGrid stroke="hsl(var(--reference-border))" vertical={false} />
                 <XAxis dataKey="day" stroke="hsl(var(--reference-foreground))" fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis stroke="hsl(var(--reference-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }} formatter={(v: number) => fmtMoney(v)} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0].payload as any;
+                    return (
+                      <div className="bg-card border border-border rounded-lg p-3 text-xs shadow-sm">
+                        <div className="font-semibold mb-1">{d.day} — {fmtMoney(d.revenue)}</div>
+                        <div className="text-muted-foreground">
+                          Top category: <span className="text-foreground font-medium">{d.topCategory}</span>
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
                 <Bar dataKey="revenue" radius={[4, 4, 0, 0]} fillOpacity={0.6}>
                   {chartData.map((d, i) => (
                     <Cell key={i} fill={d.type === "Service" ? "hsl(var(--service))" : "hsl(var(--production))"} strokeDasharray="3 3" stroke={d.type === "Service" ? "hsl(var(--service))" : "hsl(var(--production))"} />
