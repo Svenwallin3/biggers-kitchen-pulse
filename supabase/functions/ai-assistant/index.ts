@@ -193,7 +193,7 @@ function fakeAnswer(question: string): string {
     const m2Units = units - m1Units;
     const peakHour = 11 + Math.floor(r(4) * 7);
     const peakLabel = peakHour > 12 ? `${peakHour - 12} PM` : `${peakHour} ${peakHour === 12 ? "PM" : "AM"}`;
-    return `We sold **${units} ${product}** on ${period.dateLabel}, generating **${money(revenue)}** in revenue at an average of $${unitPrice.toFixed(2)} per unit.\n\n• Market 1: ${m1Units} units (${Math.round(m1Units/units*100)}%)\n• Market 2: ${m2Units} units (${Math.round(m2Units/units*100)}%)\n• Peak hour: ${peakLabel}`;
+    return `We sold ${units} ${product} on ${period.dateLabel}, generating ${money(revenue)} in revenue at an average of $${unitPrice.toFixed(2)} per unit.\n\n• Market 1: ${m1Units} units (${Math.round(m1Units/units*100)}%)\n• Market 2: ${m2Units} units (${Math.round(m2Units/units*100)}%)\n• Peak hour: ${peakLabel}`;
   }
 
   // Revenue questions
@@ -204,14 +204,14 @@ function fakeAnswer(question: string): string {
     const multiplier = period.phrase.includes("week") ? 7 : period.phrase.includes("month") ? 30 : 1;
     const total = rev * multiplier;
     const yoy = (r(2) * 20 - 5).toFixed(1);
-    return `Total revenue${scope} ${period.phrase} was **${money(total)}**, ${parseFloat(yoy) >= 0 ? "up" : "down"} ${Math.abs(parseFloat(yoy))}% versus the same period a year prior.`;
+    return `Total revenue${scope} ${period.phrase} was ${money(total)}, ${parseFloat(yoy) >= 0 ? "up" : "down"} ${Math.abs(parseFloat(yoy))}% versus the same period a year prior.`;
   }
 
   // Labor questions
   if (q.includes("labor")) {
     const pct = (24 + r(1) * 10).toFixed(1);
     const cost = 1800 + Math.floor(r(2) * 1200);
-    return `Labor cost ran **${pct}%** of sales ${period.phrase} (${money(cost)}), which is ${r(3) > 0.5 ? "slightly above" : "in line with"} the 28% target.`;
+    return `Labor cost ran ${pct}% of sales ${period.phrase} (${money(cost)}), which is ${r(3) > 0.5 ? "slightly above" : "in line with"} the 28% target.`;
   }
 
   // Category / top performers
@@ -219,20 +219,20 @@ function fakeAnswer(question: string): string {
     const cats = ["Sandwiches", "Salads", "Bowls", "Beverages", "Desserts", "Produce"];
     const top = pick(cats, seed);
     const rev = 1200 + Math.floor(r(1) * 1800);
-    return `**${top}** was the top category ${period.phrase} with ${money(rev)} in sales, driven mostly by the midday rush.`;
+    return `${top} was the top category ${period.phrase} with ${money(rev)} in sales, driven mostly by the midday rush.`;
   }
 
   // Production / sell-through
   if (q.includes("production") || q.includes("bake") || q.includes("sell-through") || q.includes("sell through")) {
     const pct = (38 + r(1) * 25).toFixed(0);
-    return `Sell-through across bakery production was **${pct}%** ${period.phrase} — Sourdough Loaf and Croissants moved fastest, while Quiche and Focaccia trays under-sold by roughly 30%.`;
+    return `Sell-through across bakery production was ${pct}% ${period.phrase} — Sourdough Loaf and Croissants moved fastest, while Quiche and Focaccia trays under-sold by roughly 30%.`;
   }
 
   // Average ticket
   if (q.includes("ticket") || q.includes("average")) {
     const avg = (14 + r(1) * 8).toFixed(2);
     const tickets = 280 + Math.floor(r(2) * 180);
-    return `Average ticket was **$${avg}** on ${tickets} transactions ${period.phrase} — about $0.${Math.floor(r(3) * 90 + 10)} higher than the trailing 4-week average.`;
+    return `Average ticket was $${avg} on ${tickets} transactions ${period.phrase} — about $0.${Math.floor(r(3) * 90 + 10)} higher than the trailing 4-week average.`;
   }
 
   // Weather impact
