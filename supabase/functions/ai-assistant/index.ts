@@ -53,19 +53,12 @@ Deno.serve(async (req) => {
 
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 
-    // Placeholder mode — no API key yet. Return a deterministic stub
-    // so the UI is fully wired and testable.
+    // Placeholder mode — no API key yet. Return realistic-looking
+    // fake answers so managers can preview what real responses look like.
     if (!ANTHROPIC_API_KEY) {
+      const answer = fakeAnswer(question);
       return new Response(
-        JSON.stringify({
-          answer:
-            `[Placeholder response — Anthropic API key not yet configured]\n\n` +
-            `Your question: "${question}"\n\n` +
-            `Once the ANTHROPIC_API_KEY is added, Claude will answer using the ` +
-            `live dashboard data snapshot (today, yesterday, last week, last month, ` +
-            `categories, hourly sales, production, labor).`,
-          placeholder: true,
-        }),
+        JSON.stringify({ answer, placeholder: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
