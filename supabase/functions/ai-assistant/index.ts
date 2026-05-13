@@ -121,63 +121,123 @@ function money(n: number): string {
   return "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
+// Detect a time period mentioned in the question.
+function detectPeriod(q: string): { phrase: string; dateLabel: string } {
+  const holidays: Array<[RegExp, string, string]> = [
+    [/4th of july|fourth of july|july\s*4|independence day/, "last 4th of July", "July 4 last year"],
+    [/memorial day/, "Memorial Day weekend last year", "late May last year"],
+    [/labor day/, "Labor Day weekend last year", "early September last year"],
+    [/thanksgiving/, "Thanksgiving last year", "late November last year"],
+    [/christmas|xmas/, "Christmas last year", "December 25 last year"],
+    [/new year/, "New Year's last year", "January 1"],
+    [/halloween/, "Halloween last year", "October 31 last year"],
+    [/valentine/, "Valentine's Day last year", "February 14 last year"],
+    [/easter/, "Easter weekend last year", "spring last year"],
+    [/super bowl/, "Super Bowl Sunday", "early February"],
+  ];
+  for (const [re, phrase, label] of holidays) {
+    if (re.test(q)) return { phrase, dateLabel: label };
+  }
+  const months = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+  for (const m of months) {
+    if (q.includes(m)) {
+      const yr = q.includes("last year") || q.includes("previous year") ? " last year" : "";
+      const cap = m[0].toUpperCase() + m.slice(1);
+      return { phrase: `${cap}${yr}`, dateLabel: `${cap}${yr}` };
+    }
+  }
+  if (q.includes("last year")) return { phrase: "this time last year", dateLabel: "same period last year" };
+  if (q.includes("last week")) return { phrase: "last week", dateLabel: "last week" };
+  if (q.includes("last month")) return { phrase: "last month", dateLabel: "last month" };
+  if (q.includes("this week")) return { phrase: "this week so far", dateLabel: "this week" };
+  if (q.includes("this month")) return { phrase: "this month so far", dateLabel: "this month" };
+  if (q.includes("today")) return { phrase: "today", dateLabel: "today" };
+  if (q.includes("yesterday")) return { phrase: "yesterday", dateLabel: "yesterday" };
+  return { phrase: "yesterday", dateLabel: "yesterday" };
+}
+
+// Pull a product/item name out of the question.
+function detectProduct(q: string): string | null {
+  const patterns = [
+    /how many ([a-z][a-z\s'-]{1,40}?)(?:\s+(?:did|were|have|do|does|are))?\s+(?:we\s+)?(?:sell|sold|move)/,
+    /how many ([a-z][a-z\s'-]{1,40}?)\s+(?:were\s+)?sold/,
+    /(?:did|do)\s+we\s+sell\s+(?:any\s+)?([a-z][a-z\s'-]{1,40})/,
+    /sales?\s+of\s+([a-z][a-z\s'-]{1,40})/,
+    /([a-z][a-z\s'-]{1,40})\s+sales\b/,
+  ];
+  for (const re of patterns) {
+    const m = q.match(re);
+    if (m) {
+      const p = m[1].trim()
+        .replace(/\b(last|this|the|our|of|on|in|at|for|during|yesterday|today|week|month|year|day|previous|fourth|4th|july|june|may|april|march|february|january|august|september|october|november|december|memorial|labor|thanksgiving|christmas|easter|halloween|valentine|new)\b.*$/g, "")
+        .trim();
+      if (p && p.length > 1 && p.length < 40) return p;
+    }
+  }
+  return null;
+}
+
 function fakeAnswer(question: string): string {
   const q = question.toLowerCase();
   const seed = hash(q);
   const r = (n: number) => Math.abs((seed >> n) % 1000) / 1000;
+  const period = detectPeriod(q);
 
-  // Product / item lookups (e.g. "how many tomatoes did we sell yesterday")
-  const productMatch = q.match(/how many ([a-z\s]+?) (did we |were |have we )?sold?/);
-  if (productMatch) {
-    const product = productMatch[1].trim();
-    const units = 40 + Math.floor(r(1) * 180);
-    const revenue = Math.round(units * (3 + r(2) * 8));
-    return `We sold ${units} ${product} yesterday across both markets, generating ${money(revenue)} in revenue. Market 1 accounted for about ${Math.round(45 + r(3) * 20)}% of the volume.`;
+  // Product / item lookups — highest priority
+  const product = detectProduct(q);
+  if (product) {
+    const units = 25 + Math.floor(r(1) * 220);
+    const unitPrice = +(2 + r(2) * 9).toFixed(2);
+    const revenue = Math.round(units * unitPrice);
+    const m1Units = Math.round(units * (40 + r(3) * 25) / 100);
+    const m2Units = units - m1Units;
+    const peakHour = 11 + Math.floor(r(4) * 7);
+    const peakLabel = peakHour > 12 ? `${peakHour - 12} PM` : `${peakHour} ${peakHour === 12 ? "PM" : "AM"}`;
+    return `We sold ${units} ${product} on ${period.dateLabel}, generating ${money(revenue)} in revenue at an average of $${unitPrice.toFixed(2)} per unit.\n\n• Market 1: ${m1Units} units (${Math.round(m1Units/units*100)}%)\n• Market 2: ${m2Units} units (${Math.round(m2Units/units*100)}%)\n• Peak hour: ${peakLabel}`;
   }
 
   // Revenue questions
   if (q.includes("revenue") || q.includes("sales")) {
     const rev = 6000 + Math.floor(r(1) * 12000);
-    const period = q.includes("week") ? "last week" : q.includes("month") ? "last month" : q.includes("yesterday") ? "yesterday" : "today";
     const market = q.match(/market\s*(\d)/);
     const scope = market ? ` at Market ${market[1]}` : "";
-    const multiplier = period === "last week" ? 7 : period === "last month" ? 30 : 1;
+    const multiplier = period.phrase.includes("week") ? 7 : period.phrase.includes("month") ? 30 : 1;
     const total = rev * multiplier;
     const yoy = (r(2) * 20 - 5).toFixed(1);
-    return `Total revenue${scope} ${period} was ${money(total)}, ${parseFloat(yoy) >= 0 ? "up" : "down"} ${Math.abs(parseFloat(yoy))}% versus the same period last year.`;
+    return `Total revenue${scope} ${period.phrase} was ${money(total)}, ${parseFloat(yoy) >= 0 ? "up" : "down"} ${Math.abs(parseFloat(yoy))}% versus the same period a year prior.`;
   }
 
   // Labor questions
   if (q.includes("labor")) {
     const pct = (24 + r(1) * 10).toFixed(1);
     const cost = 1800 + Math.floor(r(2) * 1200);
-    return `Labor cost ran ${pct}% of sales yesterday (${money(cost)}), which is ${r(3) > 0.5 ? "slightly above" : "in line with"} the 28% target.`;
+    return `Labor cost ran ${pct}% of sales ${period.phrase} (${money(cost)}), which is ${r(3) > 0.5 ? "slightly above" : "in line with"} the 28% target.`;
   }
 
   // Category / top performers
   if (q.includes("top") || q.includes("best") || q.includes("popular")) {
-    const cats = ["Sandwiches", "Salads", "Bowls", "Beverages", "Desserts"];
+    const cats = ["Sandwiches", "Salads", "Bowls", "Beverages", "Desserts", "Produce"];
     const top = pick(cats, seed);
     const rev = 1200 + Math.floor(r(1) * 1800);
-    return `${top} was the top category yesterday with ${money(rev)} in sales, driven mostly by the lunch rush between 11 AM and 1 PM.`;
+    return `${top} was the top category ${period.phrase} with ${money(rev)} in sales, driven mostly by the midday rush.`;
   }
 
   // Production / sell-through
   if (q.includes("production") || q.includes("bake") || q.includes("sell-through") || q.includes("sell through")) {
     const pct = (38 + r(1) * 25).toFixed(0);
-    return `Sell-through across bakery production was ${pct}% yesterday — Sourdough Loaf and Croissants moved fastest, while Quiche and Focaccia trays under-sold by roughly 30%.`;
+    return `Sell-through across bakery production was ${pct}% ${period.phrase} — Sourdough Loaf and Croissants moved fastest, while Quiche and Focaccia trays under-sold by roughly 30%.`;
   }
 
   // Average ticket
   if (q.includes("ticket") || q.includes("average")) {
     const avg = (14 + r(1) * 8).toFixed(2);
     const tickets = 280 + Math.floor(r(2) * 180);
-    return `Average ticket was $${avg} on ${tickets} transactions yesterday — about $0.${Math.floor(r(3) * 90 + 10)} higher than the trailing 4-week average.`;
+    return `Average ticket was $${avg} on ${tickets} transactions ${period.phrase} — about $0.${Math.floor(r(3) * 90 + 10)} higher than the trailing 4-week average.`;
   }
 
   // Weather impact
   if (q.includes("weather") || q.includes("rain")) {
-    return `Yesterday was ${pick(["sunny", "partly cloudy", "light rain"], seed)} with a high of ${68 + Math.floor(r(1) * 20)}°F. Foot traffic was ${r(2) > 0.5 ? "right on" : "about 8% below"} forecast.`;
+    return `${period.phrase} was ${pick(["sunny", "partly cloudy", "light rain"], seed)} with a high of ${68 + Math.floor(r(1) * 20)}°F. Foot traffic was ${r(2) > 0.5 ? "right on" : "about 8% below"} forecast.`;
   }
 
   // Generic fallback
