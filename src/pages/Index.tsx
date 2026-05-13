@@ -248,6 +248,7 @@ const Index = () => {
             </TabsContent>
           </Tabs>
         </main>
+        <AssistantWidget />
       </div>
     </SettingsProvider>
   );
