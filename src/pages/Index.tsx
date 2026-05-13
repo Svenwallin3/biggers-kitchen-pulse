@@ -16,6 +16,7 @@ import { WeeklyLast } from "@/components/dashboard/views/WeeklyLast";
 import { WeeklyThis } from "@/components/dashboard/views/WeeklyThis";
 import { MonthlyLast } from "@/components/dashboard/views/MonthlyLast";
 import { MonthlyThis } from "@/components/dashboard/views/MonthlyThis";
+import { AssistantWidget } from "@/components/AssistantWidget";
 
 const MAX_FUTURE_WEEKS = 4;
 const MAX_FUTURE_MONTHS = 4;
