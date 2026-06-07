@@ -4,7 +4,7 @@ import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { useSettings } from "@/lib/settings";
 import { KpiCard } from "../KpiCard";
 import { DayBanner } from "../DayBanner";
-import { HourlyBarChart } from "../HourlyBarChart";
+import { HourlySimpleChart } from "../HourlySimpleChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 import { ProductionLogPanel } from "../ProductionLogPanel";
