@@ -46,7 +46,7 @@ export function DailyYesterday({ date }: { date: Date }) {
         <section className="space-y-3">
           <h3 className="section-header">Hourly Sales</h3>
           <div className="bg-card border border-border rounded-xl p-4">
-            <HourlyBarChart data={data.hourly} />
+            <HourlySimpleChart data={data.hourly} />
           </div>
         </section>
       ) : (
