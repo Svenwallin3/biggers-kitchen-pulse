@@ -4,7 +4,7 @@ import { fmtMoney, fmtMoney2, fmtPct } from "@/lib/format";
 import { useSettings } from "@/lib/settings";
 import { KpiCard } from "../KpiCard";
 import { DayBanner } from "../DayBanner";
-import { HourlyBarChart } from "../HourlyBarChart";
+import { HourlySimpleChart } from "../HourlySimpleChart";
 import { CategoryPanel } from "../CategoryPanel";
 import { WeatherInline } from "../Weather";
 import { ProductionLogPanel } from "../ProductionLogPanel";
@@ -46,7 +46,7 @@ export function DailyYesterday({ date }: { date: Date }) {
         <section className="space-y-3">
           <h3 className="section-header">Hourly Sales</h3>
           <div className="bg-card border border-border rounded-xl p-4">
-            <HourlyBarChart data={data.hourly} />
+            <HourlySimpleChart data={data.hourly} />
           </div>
         </section>
       ) : (
